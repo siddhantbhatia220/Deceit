@@ -1,0 +1,117 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  USER
+  ADMIN
+  MODERATOR
+}
+
+model User {
+  id            String    @id @default(uuid())
+  username      String    @unique
+  email         String?   @unique
+  passwordHash  String?
+  avatar        String    @default("avatar-1")
+  role          Role      @default(USER)
+  level         Int       @default(1)
+  xp            Int       @default(0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  profile       Profile?
+  matchStats    PlayerMatchStat[]
+  wordPacks     WordPack[]
+  reports       Report[]          @relation("ReportedBy")
+  bans          Ban[]
+}
+
+model Profile {
+  id              String   @id @default(uuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  gamesPlayed     Int      @default(0)
+  gamesWon        Int      @default(0)
+  imposterWins    Int      @default(0)
+  civilianWins    Int      @default(0)
+  votesCast       Int      @default(0)
+  votesCorrect    Int      @default(0)
+  cluesSubmitted  Int      @default(0)
+  bio             String?
+}
+
+model WordPack {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  category    String
+  isOfficial  Boolean  @default(false)
+  createdBy   String
+  user        User?    @relation(fields: [createdBy], references: [id])
+  downloads   Int      @default(0)
+  likes       Int      @default(0)
+  words       Word[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Word {
+  id          String    @id @default(uuid())
+  wordPackId  String
+  wordPack    WordPack  @relation(fields: [wordPackId], references: [id], onDelete: Cascade)
+  word        String
+  category    String
+  difficulty  String    @default("MEDIUM")
+  hint        String?
+  tags        String[]
+}
+
+model GameMatch {
+  id          String            @id @default(uuid())
+  roomCode    String
+  gameMode    String
+  winnerTeam  String
+  durationSec Int
+  roundsCount Int
+  createdAt   DateTime          @default(now())
+  players     PlayerMatchStat[]
+}
+
+model PlayerMatchStat {
+  id          String    @id @default(uuid())
+  gameMatchId String
+  gameMatch   GameMatch @relation(fields: [gameMatchId], references: [id], onDelete: Cascade)
+  userId      String?
+  user        User?     @relation(fields: [userId], references: [id])
+  playerName  String
+  role        String
+  isWinner    Boolean
+  xpEarned    Int
+  score       Int
+}
+
+model Report {
+  id          String   @id @default(uuid())
+  reporterId  String
+  reporter    User     @relation("ReportedBy", fields: [reporterId], references: [id])
+  targetName  String
+  reason      String
+  details     String?
+  status      String   @default("PENDING")
+  createdAt   DateTime @default(now())
+}
+
+model Ban {
+  id        String    @id @default(uuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reason    String
+  expiresAt DateTime?
+  createdAt DateTime  @default(now())
+}
