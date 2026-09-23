@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-[#050505] text-[#FFFFFF] font-sans antialiased min-h-screen selection:bg-[#E50914] selection:text-white;
+  }
+}
+
+.glass-panel {
+  background: rgba(13, 13, 13, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-panel-red {
+  background: rgba(20, 10, 10, 0.9);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(229, 9, 20, 0.4);
+  box-shadow: 0 0 30px rgba(229, 9, 20, 0.2);
+}
+
+.text-gradient-red {
+  background: linear-gradient(135deg, #FFFFFF 0%, #FF1E2D 60%, #E50914 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
