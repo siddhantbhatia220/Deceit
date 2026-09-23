@@ -1,0 +1,32 @@
+{
+  "name": "deceit-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "DECEIT - Production-Ready Multiplayer Social Deduction Game Platform",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspaces",
+    "dev:api": "npm run dev --workspace=@deceit/api",
+    "dev:web": "npm run dev --workspace=@deceit/web",
+    "build": "npm run build --workspaces",
+    "test": "npm run test --workspaces",
+    "lint": "npm run lint --workspaces"
+  },
+  "keywords": [
+    "social-deduction",
+    "multiplayer",
+    "party-game",
+    "realtime",
+    "game-engine"
+  ],
+  "author": "DECEIT Engineering Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^26.6.2",
+    "typescript": "^7.0.2",
+    "zod": "^4.6.5"
+  }
+}
