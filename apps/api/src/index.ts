@@ -182,6 +182,24 @@ export async function createServer() {
       }
     });
 
+    socket.on('player:update_name', (payload, callback) => {
+      const mapping = socketToPlayerMap.get(socket.id);
+      if (!mapping) return callback({ success: false, error: 'You are not in a room.' });
+      const game = rooms.get(mapping.roomCode);
+      if (!game || game.phase !== 'LOBBY') {
+        return callback({ success: false, error: 'Names can only be changed in the lobby.' });
+      }
+
+      const name = payload.name.trim().slice(0, 20);
+      if (!game.updatePlayerName(mapping.playerId, name)) {
+        return callback({ success: false, error: 'Choose a non-empty name that is not already in use.' });
+      }
+
+      mapping.username = name;
+      callback({ success: true });
+      broadcastGameState(game);
+    });
+
     socket.on('player:add_bot', (payload) => {
       const mapping = socketToPlayerMap.get(socket.id);
       if (!mapping) return;
