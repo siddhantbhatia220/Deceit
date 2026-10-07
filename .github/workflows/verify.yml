@@ -1,0 +1,44 @@
+name: Verify workspaces
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build shared config
+        run: npm run build --workspace=@deceit/config
+
+      - name: Build shared types
+        run: npm run build --workspace=@deceit/game-types
+
+      - name: Build game engine
+        run: npm run build --workspace=@deceit/game-engine
+
+      - name: Test game engine
+        run: npm test --workspace=@deceit/game-engine
+
+      - name: Build API
+        run: npm run build --workspace=@deceit/api
+
+      - name: Build web app
+        run: npm run build --workspace=@deceit/web
