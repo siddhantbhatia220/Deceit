@@ -6,11 +6,14 @@ import {
   ArrowRight,
   Bot,
   Check,
+  ChevronDown,
   Copy,
   Crown,
   Eye,
+  Fingerprint,
   Gamepad2,
   LogIn,
+  LoaderCircle,
   MessageCircle,
   Plus,
   RefreshCw,
@@ -18,15 +21,17 @@ import {
   ShieldAlert,
   Smartphone,
   Sparkles,
+  Tags,
   Users,
   Wifi,
   WifiOff,
   X,
   Zap,
 } from 'lucide-react';
-import { ClientGameState } from '@deceit/game-types';
+import { ClientGameState, WORD_CATEGORIES } from '@deceit/game-types';
 import { APP_CONFIG } from '@deceit/config';
 import { getSocket, getSocketUrl } from '@/lib/socket';
+import { LocalPassAndPlay } from '@/components/game/LocalPassAndPlay';
 
 const tabs = [
   { id: 'ONLINE', label: 'Online', icon: Wifi },
@@ -35,22 +40,12 @@ const tabs = [
 ] as const;
 type Tab = (typeof tabs)[number]['id'];
 
-type LocalPlayer = { id: number; name: string };
-const LOCAL_WORDS = [
-  { word: 'INTERSTELLAR', category: 'Movies' },
-  { word: 'ALGORITHM', category: 'Technology' },
-  { word: 'PIZZA', category: 'Food' },
-  { word: 'GUITAR', category: 'Music' },
-  { word: 'VOLCANO', category: 'Nature' },
-  { word: 'CHESS', category: 'Games' },
-  { word: 'LIGHTHOUSE', category: 'Places' },
-  { word: 'TELESCOPE', category: 'Science' },
-  { word: 'SUBMARINE', category: 'Vehicles' },
-];
-
 export default function GamePage() {
   const [tab, setTab] = useState<Tab>('ONLINE');
+  const [mobileGameEntered, setMobileGameEntered] = useState(false);
   const [username, setUsername] = useState('');
+  const [selectedWordCategories, setSelectedWordCategories] = useState([...WORD_CATEGORIES]);
+  const [categoryPickerOpen, setCategoryPickerOpen] = useState(false);
   const [roomCode, setRoomCode] = useState('');
   const [game, setGame] = useState<ClientGameState | null>(null);
   const [error, setError] = useState('');
@@ -61,19 +56,6 @@ export default function GamePage() {
   const [chat, setChat] = useState('');
   const [messages, setMessages] = useState<Array<{ id: string; senderName: string; text: string }>>([]);
   const [vote, setVote] = useState<string | null>(null);
-
-  const [localPlayers, setLocalPlayers] = useState<LocalPlayer[]>([
-    { id: 1, name: 'Alex' },
-    { id: 2, name: 'Sam' },
-    { id: 3, name: 'Jordan' },
-    { id: 4, name: 'Taylor' },
-  ]);
-  const [localName, setLocalName] = useState('');
-  const [localRunning, setLocalRunning] = useState(false);
-  const [localTurn, setLocalTurn] = useState(0);
-  const [localRevealed, setLocalRevealed] = useState(false);
-  const [localImposter, setLocalImposter] = useState(0);
-  const [localWord, setLocalWord] = useState(LOCAL_WORDS[0]);
 
   const socketReady = Boolean(getSocketUrl());
 
@@ -103,13 +85,17 @@ export default function GamePage() {
   }, [socketReady]);
 
   const onlineConfigured = socketReady;
+  const networkState = onlineConfigured ? connected ? 'live' : 'linking' : tab === 'LOCAL' ? 'local' : 'missing';
+  const networkLabel = onlineConfigured ? connected ? 'CONNECTED' : 'LINKING' : tab === 'LOCAL' ? 'NOT REQUIRED' : 'ADDRESS NEEDED';
+  const networkDescription = onlineConfigured ? connected ? 'Multiplayer server connected' : 'Connecting to the multiplayer server' : tab === 'LOCAL' ? 'Pass and play works without an online server' : 'Add NEXT_PUBLIC_WS_URL to enable online rooms';
 
   const createRoom = () => {
     if (!onlineConfigured) return setError('Online play is not configured yet. Deploy the API and set NEXT_PUBLIC_WS_URL in Vercel.');
     if (!username.trim()) return setError('Choose a codename first.');
+    if (selectedWordCategories.length === 0) return setError('Choose at least one word category.');
     getSocket().emit('room:create', {
       username: username.trim(),
-      settings: { imposterCount: 1, imposterHintMode: 'CATEGORY', wordPackId: 'pack-movies-cinema', clueOrder: 'SEQUENTIAL' },
+      settings: { imposterCount: 1, imposterHintMode: 'CATEGORY', wordPackId: 'pack-movies-cinema', wordCategories: selectedWordCategories, clueOrder: 'SEQUENTIAL' },
     }, (res) => {
       if (!res.success) setError(res.error || 'Could not create room.');
     });
@@ -123,6 +109,12 @@ export default function GamePage() {
     });
   };
 
+  const toggleWordCategory = (category: (typeof WORD_CATEGORIES)[number]) => {
+    setSelectedWordCategories((selected) => selected.includes(category)
+      ? selected.filter((item) => item !== category)
+      : [...selected, category]);
+  };
+
   const copyRoom = async () => {
     if (!game) return;
     try {
@@ -134,42 +126,29 @@ export default function GamePage() {
     }
   };
 
-  const startLocal = () => {
-    if (localPlayers.length < 3) return setError('Add at least 3 players.');
-    setLocalImposter(Math.floor(Math.random() * localPlayers.length));
-    setLocalWord(LOCAL_WORDS[Math.floor(Math.random() * LOCAL_WORDS.length)]);
-    setLocalTurn(0);
-    setLocalRevealed(false);
-    setLocalRunning(true);
-    setError('');
-  };
-
-  const addLocalPlayer = () => {
-    const name = localName.trim();
-    if (!name) return;
-    if (localPlayers.some((p) => p.name.toLowerCase() === name.toLowerCase())) return setError('That player is already added.');
-    if (localPlayers.length >= 12) return setError('Maximum 12 players.');
-    setLocalPlayers((p) => [...p, { id: Date.now(), name }]);
-    setLocalName('');
-    setError('');
-  };
-
-  const currentLocal = localPlayers[localTurn];
-
-  if (game) return <GameRoom game={game} username={username} connected={connected} error={error} setError={setError} copied={copied} copyRoom={copyRoom} clue={clue} setClue={setClue} guess={guess} setGuess={setGuess} chat={chat} setChat={setChat} messages={messages} vote={vote} setVote={setVote} />;
+  if (game) return <GameRoom game={game} username={username} setUsername={setUsername} connected={connected} error={error} setError={setError} copied={copied} copyRoom={copyRoom} clue={clue} setClue={setClue} guess={guess} setGuess={setGuess} chat={chat} setChat={setChat} messages={messages} vote={vote} setVote={setVote} />;
 
   return (
-    <main className="app-shell">
+    <main className={`app-shell ${tab === 'LOCAL' ? 'local-mode-shell' : ''} ${mobileGameEntered ? 'mobile-game-entered' : ''}`}>
       <header className="topbar">
-        <div className="brand"><span className="brand-mark">D</span><span>DECEIT</span></div>
-        <div className="status-pill"><span className={`status-dot ${onlineConfigured ? connected ? 'live' : 'idle' : 'offline'}`} />{onlineConfigured ? connected ? 'Online service connected' : 'Online service ready' : 'Online service not configured'}</div>
+        <a className="brand brand-home" href="/" aria-label="DECEIT home">
+          <span className="brand-mark"><Fingerprint size={22} strokeWidth={1.8} /></span>
+          <span>DECEIT</span>
+        </a>
+        <div className={`network-readout network-readout-${networkState}`} role="status" aria-live="polite" title={networkDescription}>
+          <span className="network-bars" aria-hidden="true"><i /><i /><i /></span>
+          <span className="network-copy"><span>NETWORK</span><strong>{networkLabel}</strong></span>
+        </div>
       </header>
 
-      <section className="hero">
+      <section className={`hero ${tab === 'LOCAL' ? 'local-mode-hero' : ''}`}>
         <div className="hero-copy">
-          <div className="eyebrow"><Zap size={14} /> SOCIAL DEDUCTION • REAL-TIME</div>
-          <h1>Trust no one.<br /><span>Find the imposter.</span></h1>
-          <p>A sharp, fast party game where one player is bluffing — and everyone else knows the word.</p>
+          <div className="eyebrow"><Zap size={14} /> A PASS-AROUND BLUFFING GAME</div>
+          <h1>Everybody has the word.<br /><span>Except one.</span></h1>
+          <p>Give one clue. Read the room. Find who is making it up.</p>
+          <button className="mobile-play-cta" type="button" onClick={() => setMobileGameEntered(true)}>
+            Choose a game <ArrowRight size={16} />
+          </button>
         </div>
 
         <div className="play-card">
@@ -180,30 +159,48 @@ export default function GamePage() {
           <AnimatePresence mode="wait">
             {tab === 'ONLINE' && (
               <motion.div key="online" className="panel-body" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
-                <div className="panel-heading"><div><div className="kicker">ONLINE MATCH</div><h2>Enter the game</h2></div><div className="mini-icon"><Gamepad2 size={18} /></div></div>
-                {!onlineConfigured && <div className="notice warning"><ShieldAlert size={16} /><span>Frontend is live, but the multiplayer server is not connected. Local Pass & Play works without it.</span></div>}
+                <div className="panel-heading"><div><div className="kicker">REMOTE ROOM</div><h2>Bring your crew in.</h2></div><div className="mini-icon"><Gamepad2 size={18} /></div></div>
+                {!onlineConfigured && <div className="notice warning"><ShieldAlert size={16} /><span>Online rooms need an API address. Pass & Play works without one.</span></div>}
                 {error && <div className="notice error"><ShieldAlert size={16} /><span>{error}</span></div>}
-                <label className="field-label">CODENAME<input value={username} onChange={(e) => setUsername(e.target.value.slice(0, 20))} placeholder="e.g. NightOwl" maxLength={20} autoComplete="nickname" /></label>
-                <button className="primary-btn" onClick={createRoom} disabled={!onlineConfigured}><Plus size={18} /> Create a room <ArrowRight size={17} /></button>
+                <label className="field-label">PLAYER NAME<input value={username} onChange={(e) => setUsername(e.target.value.slice(0, 20))} placeholder="Choose your name" maxLength={20} autoComplete="nickname" /></label>
+                <div className="category-picker">
+                  <button className="category-picker-toggle" type="button" aria-expanded={categoryPickerOpen} onClick={() => setCategoryPickerOpen((open) => !open)}>
+                    <span><Tags size={15} /> WORD POOL</span>
+                    <strong>{selectedWordCategories.length} / {WORD_CATEGORIES.length}</strong>
+                    <ChevronDown size={15} className={categoryPickerOpen ? 'category-picker-chevron open' : 'category-picker-chevron'} />
+                  </button>
+                  {categoryPickerOpen && (
+                    <div className="category-picker-panel">
+                      <div className="category-picker-tools">
+                        <span>Choose what can be dealt.</span>
+                        <button type="button" onClick={() => setSelectedWordCategories([...WORD_CATEGORIES])}>All</button>
+                        <button type="button" onClick={() => setSelectedWordCategories([])}>Clear</button>
+                      </div>
+                      <div className="category-grid">
+                        {WORD_CATEGORIES.map((category) => (
+                          <label className={selectedWordCategories.includes(category) ? 'category-option selected' : 'category-option'} key={category}>
+                            <input type="checkbox" checked={selectedWordCategories.includes(category)} onChange={() => toggleWordCategory(category)} />
+                            <span>{category}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+                <button className="primary-btn" onClick={createRoom} disabled={!onlineConfigured || selectedWordCategories.length === 0}><Plus size={18} /> Create online room <ArrowRight size={17} /></button>
                 <div className="divider"><span>OR JOIN A ROOM</span></div>
                 <div className="join-row"><input value={roomCode} onChange={(e) => setRoomCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8))} placeholder="ROOM CODE" /><button className="secondary-btn" onClick={joinRoom} disabled={!onlineConfigured}><LogIn size={17} /> Join</button></div>
-                <div className="feature-row"><span><Users size={14} /> 3–24 players</span><span><Zap size={14} /> Live rounds</span><span><ShieldAlert size={14} /> Secret roles</span></div>
+                <div className="feature-row"><span><Users size={14} /> 3–24 players</span><span><Zap size={14} /> Untimed clues</span><span><ShieldAlert size={14} /> Hidden roles</span></div>
               </motion.div>
             )}
 
             {tab === 'LOCAL' && (
-              <motion.div key="local" className="panel-body" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
-                {!localRunning ? <>
-                  <div className="panel-heading"><div><div className="kicker">PASS & PLAY</div><h2>One phone. Everyone plays.</h2></div><div className="mini-icon"><Smartphone size={18} /></div></div>
-                  {error && <div className="notice error"><ShieldAlert size={16} /><span>{error}</span></div>}
-                  <div className="add-player"><input value={localName} onChange={(e) => setLocalName(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && addLocalPlayer()} placeholder="Player name" maxLength={20} /><button className="secondary-btn square" onClick={addLocalPlayer}><Plus size={18} /></button></div>
-                  <div className="player-list">{localPlayers.map((p, i) => <div className="player-chip" key={p.id}><span className="avatar">{p.name.slice(0, 1).toUpperCase()}</span><span>{p.name}</span>{i === 0 && <Crown size={13} className="muted-icon" />}<button onClick={() => setLocalPlayers((all) => all.filter((x) => x.id !== p.id))} aria-label={`Remove ${p.name}`}><X size={14} /></button></div>)}</div>
-                  <button className="primary-btn" onClick={startLocal}><Sparkles size={18} /> Start local match <ArrowRight size={17} /></button>
-                </> : <LocalReveal player={currentLocal} index={localTurn} total={localPlayers.length} revealed={localRevealed} isImposter={localTurn === localImposter} word={localWord.word} category={localWord.category} onReveal={() => setLocalRevealed(true)} onNext={() => { if (localTurn + 1 < localPlayers.length) { setLocalTurn((n) => n + 1); setLocalRevealed(false); } else { setLocalRunning(false); setLocalRevealed(false); } }} />}
+              <motion.div key="local" className="local-panel" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
+                <LocalPassAndPlay />
               </motion.div>
             )}
 
-            {tab === 'RULES' && <motion.div key="rules" className="panel-body rules" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}><div className="kicker">THE QUICK RULEBOOK</div><h2>Four moves. One liar.</h2>{[['01','Reveal','Everyone secretly gets the word — except the Imposter.'],['02','Clue','Give a subtle clue without making the word obvious.'],['03','Discuss & vote','Read the room. Spot the player whose clue feels wrong.'],['04','Final guess','If caught, the Imposter gets one last chance to steal the win.']].map(([n,t,d]) => <div className="rule" key={n}><span>{n}</span><div><strong>{t}</strong><p>{d}</p></div></div>)}</motion.div>}
+            {tab === 'RULES' && <motion.div key="rules" className="panel-body rules" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}><div className="kicker">ROUND ORDER</div><h2>Four turns to a verdict.</h2>{[['01','Look','Take your role in private. Keep the screen turned away.'],['02','Clue','Say one thing that proves you know the word, without giving it away.'],['03','Listen','Compare the clues. Someone is working from a different story.'],['04','Vote','Choose once. The most-voted player is unmasked.']].map(([n,t,d]) => <div className="rule" key={n}><span>{n}</span><div><strong>{t}</strong><p>{d}</p></div></div>)}</motion.div>}
           </AnimatePresence>
         </div>
       </section>
@@ -213,14 +210,11 @@ export default function GamePage() {
   );
 }
 
-function LocalReveal({ player, index, total, revealed, isImposter, word, category, onReveal, onNext }: { player: LocalPlayer; index: number; total: number; revealed: boolean; isImposter: boolean; word: string; category: string; onReveal: () => void; onNext: () => void }) {
-  return <div className="reveal-screen"><div className="progress-label">PLAYER {index + 1} OF {total}</div><h2>{player.name}</h2>{!revealed ? <><p>Pass the phone to <b>{player.name}</b>. Make sure nobody else is looking.</p><button className="primary-btn" onClick={onReveal}><Eye size={18} /> Reveal my role</button></> : <div className={`secret-card ${isImposter ? 'imposter' : ''}`}><div className="secret-badge">{isImposter ? 'YOU ARE THE' : 'YOUR SECRET WORD'}</div><strong>{isImposter ? 'IMPOSTER' : word}</strong><p>{isImposter ? `Blend in. You do not know the word. Category: ${category}` : `Category: ${category}`}</p><button className="secondary-btn" onClick={onNext}><Check size={17} /> {index + 1 === total ? 'Finish reveal' : 'Hide & pass on'}</button></div>}</div>;
-}
-
-function GameRoom(props: { game: ClientGameState; username: string; connected: boolean; error: string; setError: (s: string) => void; copied: boolean; copyRoom: () => void; clue: string; setClue: (s: string) => void; guess: string; setGuess: (s: string) => void; chat: string; setChat: (s: string) => void; messages: Array<{ id: string; senderName: string; text: string }>; vote: string | null; setVote: (s: string | null) => void }) {
-  const { game, username, connected, error, setError, copied, copyRoom, clue, setClue, guess, setGuess, chat, setChat, messages, vote, setVote } = props;
+function GameRoom(props: { game: ClientGameState; username: string; setUsername: (name: string) => void; connected: boolean; error: string; setError: (s: string) => void; copied: boolean; copyRoom: () => void; clue: string; setClue: (s: string) => void; guess: string; setGuess: (s: string) => void; chat: string; setChat: (s: string) => void; messages: Array<{ id: string; senderName: string; text: string }>; vote: string | null; setVote: (s: string | null) => void }) {
+  const { game, username, setUsername, connected, error, setError, copied, copyRoom, clue, setClue, guess, setGuess, chat, setChat, messages, vote, setVote } = props;
   const socket = getSocket();
   const [now, setNow] = useState(Date.now());
+  const [nameDraft, setNameDraft] = useState(username);
   const me = game.players.find((p) => p.name === username);
   const isTurn = game.currentTurnPlayerId === me?.id;
   const seconds = game.phaseEndTime ? Math.max(0, Math.ceil((game.phaseEndTime - now) / 1000)) : null;
@@ -231,18 +225,30 @@ function GameRoom(props: { game: ClientGameState; username: string; connected: b
     return () => window.clearInterval(interval);
   }, [game.phaseEndTime]);
 
+  useEffect(() => setNameDraft(username), [username]);
+
   const phaseLabel = game.phase.replaceAll('_', ' ');
   const submitClue = (e: React.FormEvent) => { e.preventDefault(); if (!clue.trim()) return; socket.emit('game:clue_submit', { text: clue.trim() }); setClue(''); };
   const submitVote = () => { if (!vote) return; socket.emit('game:vote_submit', { targetPlayerId: vote }); };
   const submitGuess = (e: React.FormEvent) => { e.preventDefault(); if (!guess.trim()) return; socket.emit('game:imposter_guess', { guessedWord: guess.trim() }); setGuess(''); };
   const submitChat = (e: React.FormEvent) => { e.preventDefault(); if (!chat.trim()) return; socket.emit('chat:send', { text: chat.trim() }); setChat(''); };
+  const savePlayerName = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const name = nameDraft.trim().slice(0, 20);
+    if (!name) return setError('Enter a player name.');
+    socket.emit('player:update_name', { name }, (response) => {
+      if (!response.success) return setError(response.error || 'Could not update your name.');
+      setUsername(name);
+      setError('');
+    });
+  };
 
   return <main className="room-shell">
-    <header className="room-topbar"><div className="brand"><span className="brand-mark">D</span><span>DECEIT</span></div><div className="room-center"><span className="room-code">ROOM {game.roomCode}<button onClick={copyRoom} title="Copy room code">{copied ? <Check size={14} /> : <Copy size={14} />}</button></span><span className="phase-pill">{phaseLabel}</span>{seconds !== null && <span className="timer-pill">{seconds}s</span>}</div><div className={`connection ${connected ? 'ok' : ''}`}>{connected ? <Wifi size={15} /> : <WifiOff size={15} />}{connected ? 'Connected' : 'Reconnecting'}</div></header>
+    <header className="room-topbar"><a className="brand brand-home" href="/" aria-label="DECEIT home"><span className="brand-mark"><Fingerprint size={22} strokeWidth={1.8} /></span><span>DECEIT</span></a><div className="room-center"><span className="room-code">ROOM {game.roomCode}<button onClick={copyRoom} title="Copy room code">{copied ? <Check size={14} /> : <Copy size={14} />}</button></span><span className="phase-pill">{phaseLabel}</span>{seconds !== null && <span className="timer-pill">{seconds}s</span>}</div><div className={`connection ${connected ? 'ok' : ''}`}>{connected ? <Wifi size={15} /> : <WifiOff size={15} />}{connected ? 'Connected' : 'Reconnecting'}</div></header>
     {error && <div className="notice error room-notice"><ShieldAlert size={16} /><span>{error}</span><button onClick={() => setError('')}><X size={15} /></button></div>}
     <section className="room-grid">
       <div className="main-panel">
-        {game.phase === 'LOBBY' && <div className="stage"><div className="stage-head"><div><div className="kicker">ROOM LOBBY</div><h1>Build your crew.</h1><p>Share the room code, add an AI, then launch when at least three players are ready.</p></div><button className="secondary-btn" onClick={() => socket.emit('player:add_bot', { personality: 'balanced' })}><Bot size={17} /> Add AI</button></div><div className="crew-grid">{game.players.map((p) => <div className="crew-card" key={p.id}><span className="avatar">{p.name.slice(0,1).toUpperCase()}</span><div><strong>{p.name}</strong><small>{p.isBot ? 'AI player' : p.isHost ? 'Host' : 'Player'} {p.isConnected ? '• online' : '• offline'}</small></div>{p.isHost && <Crown size={15} className="gold" />}</div>)}</div><button className="primary-btn launch" disabled={game.players.length < 3} onClick={() => socket.emit('game:start')}><Gamepad2 size={18} /> Launch match</button></div>}
+        {game.phase === 'LOBBY' && <div className="stage"><div className="stage-head"><div><div className="kicker">ROOM LOBBY</div><h1>Build your crew.</h1><p>Share the room code, add an AI, then launch when at least three players are ready.</p></div><button className="secondary-btn" onClick={() => socket.emit('player:add_bot', { personality: 'balanced' })}><Bot size={17} /> Add AI</button></div><form className="lobby-identity-form" onSubmit={savePlayerName}><label className="field-label">YOUR PLAYER NAME<input value={nameDraft} onChange={(event) => setNameDraft(event.target.value.slice(0, 20))} maxLength={20} autoComplete="nickname" /></label><button className="secondary-btn" type="submit"><Check size={15} /> Save name</button></form><div className="crew-grid">{game.players.map((p) => <div className="crew-card" key={p.id}><span className="avatar">{p.name.slice(0,1).toUpperCase()}</span><div><strong>{p.name}</strong><small>{p.isBot ? 'AI player' : p.isHost ? 'Host' : 'Player'} {p.isConnected ? '• online' : '• offline'}</small></div>{p.isHost && <Crown size={15} className="gold" />}</div>)}</div><button className="primary-btn launch" disabled={game.players.length < 3} onClick={() => socket.emit('game:start')}><Gamepad2 size={18} /> Launch match</button></div>}
         {game.phase === 'ROLE_REVEAL' && <div className="stage centered"><div className="eyebrow"><Eye size={14} /> PRIVATE ROLE</div><h1>You are <span className={game.myInfo.role === 'IMPOSTER' ? 'danger-text' : ''}>{game.myInfo.role}</span>.</h1><p>{game.myInfo.role === 'IMPOSTER' ? 'Blend in, read the clues, and survive the vote.' : 'Protect the word. Give clues that prove you know it without exposing it.'}</p><div className="intel-card">{game.myInfo.secretWord ? <><small>SECRET WORD</small><strong>{game.myInfo.secretWord}</strong><span>{game.myInfo.category}</span></> : <><small>CATEGORY</small><strong>{game.myInfo.category || 'Unknown'}</strong>{game.myInfo.hint && <span>Hint: {game.myInfo.hint}</span>}</>}</div></div>}
         {(game.phase === 'CLUE_PHASE' || game.phase === 'DISCUSSION') && <div className="stage"><div className="stage-head"><div><div className="kicker">ROUND {game.currentRound} • {phaseLabel}</div><h1>{game.phase === 'CLUE_PHASE' ? 'Leave your clue.' : 'Read the room.'}</h1><p>{isTurn ? 'It is your turn.' : 'Watch what everyone says. Someone is bluffing.'}</p></div><div className="round-chip">{game.clues.length} clues</div></div><div className="clue-feed">{game.clues.length ? game.clues.map((c) => <div className="clue" key={c.id}><span className="avatar small">{c.playerName.slice(0,1).toUpperCase()}</span><div><strong>{c.playerName}</strong><p>{c.text}</p></div></div>) : <div className="empty-state"><MessageCircle size={22} /><span>No clues yet. Be the first.</span></div>}</div>{game.phase === 'CLUE_PHASE' && <form className="composer" onSubmit={submitClue}><input value={clue} onChange={(e) => setClue(e.target.value)} placeholder={isTurn ? 'Your subtle clue…' : 'Wait for your turn…'} disabled={!isTurn} maxLength={100} /><button disabled={!isTurn}><Send size={17} /></button></form>}</div>}
         {game.phase === 'VOTING' && <div className="stage"><div className="centered"><div className="eyebrow"><ShieldAlert size={14} /> FINAL CALL</div><h1>Who is the imposter?</h1><p>Choose carefully. Your vote can end the round.</p></div><div className="vote-grid">{game.players.filter((p) => p.isAlive).map((p) => <button key={p.id} className={`vote-card ${vote === p.id ? 'selected' : ''}`} onClick={() => setVote(p.id)}><span className="avatar">{p.name.slice(0,1).toUpperCase()}</span><strong>{p.name}</strong><small>{p.isBot ? 'AI player' : 'Player'}</small></button>)}</div><button className="primary-btn" disabled={!vote} onClick={submitVote}><ShieldAlert size={18} /> Confirm vote</button></div>}

@@ -1,21 +1,27 @@
 import type { Metadata, Viewport } from 'next';
-import { Cormorant_Garamond, Manrope } from 'next/font/google';
+import { Barlow_Condensed, IBM_Plex_Mono, IBM_Plex_Sans } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
 import './globals.css';
 import { APP_CONFIG } from '@deceit/config';
 import { ServiceWorkerRegistration } from '@/components/ServiceWorkerRegistration';
 
-const manrope = Manrope({
+const plexSans = IBM_Plex_Sans({
   subsets: ['latin'],
-  variable: '--font-manrope',
-  display: 'swap',
-  weight: ['400', '500', '600', '700', '800'],
-});
-const display = Cormorant_Garamond({
-  subsets: ['latin'],
-  variable: '--font-display',
+  variable: '--font-plex-sans',
   display: 'swap',
   weight: ['400', '500', '600', '700'],
+});
+const display = Barlow_Condensed({
+  subsets: ['latin'],
+  variable: '--font-barlow-condensed',
+  display: 'swap',
+  weight: ['500', '600', '700', '800'],
+});
+const plexMono = IBM_Plex_Mono({
+  subsets: ['latin'],
+  variable: '--font-plex-mono',
+  display: 'swap',
+  weight: ['400', '500', '600'],
 });
 
 export const viewport: Viewport = {
@@ -24,7 +30,7 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
   viewportFit: 'cover',
-  themeColor: '#050505',
+  themeColor: '#102629',
 };
 
 export const metadata: Metadata = {
@@ -54,13 +60,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${manrope.variable} ${display.variable} dark`}>
+    <html lang="en" className={`${plexSans.variable} ${display.variable} ${plexMono.variable} dark`}>
       <head>
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
       </head>
-      <body className="bg-[#050505] text-white font-sans antialiased overflow-x-hidden">
+      <body className="antialiased overflow-x-hidden">
         <main className="relative z-10 min-h-dvh flex flex-col">
           {children}
         </main>
