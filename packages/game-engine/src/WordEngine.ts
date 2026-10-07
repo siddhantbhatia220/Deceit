@@ -98,6 +98,66 @@ export const BUILTIN_WORD_PACKS: WordPack[] = [
       { id: 'c6', word: 'ATTENDANCE', category: 'College', difficulty: 'medium', hint: '75% mandatory requirement to sit for final semester', tags: ['proxy', 'rollcall', 'campus'] },
     ],
   },
+  {
+    id: 'pack-world-categories',
+    title: 'The Wider World',
+    description: 'A mixed deck covering animals, music, science, culture, and more.',
+    category: 'Mixed',
+    isOfficial: true,
+    createdBy: 'DECEIT Official',
+    downloads: 0,
+    likes: 0,
+    words: [
+      { id: 'a1', word: 'OCTOPUS', category: 'Animals', difficulty: 'easy', hint: 'Eight arms and remarkable camouflage', tags: ['ocean', 'wildlife'] },
+      { id: 'a2', word: 'SNOW LEOPARD', category: 'Animals', difficulty: 'medium', hint: 'A high-altitude cat with a long tail', tags: ['mountains', 'wildlife'] },
+      { id: 'a3', word: 'AXOLOTL', category: 'Animals', difficulty: 'hard', hint: 'A salamander that keeps its youthful features', tags: ['water', 'wildlife'] },
+      { id: 'mu1', word: 'SAXOPHONE', category: 'Music', difficulty: 'easy', hint: 'A brass instrument with a reed', tags: ['jazz', 'instrument'] },
+      { id: 'mu2', word: 'VINYL RECORD', category: 'Music', difficulty: 'medium', hint: 'An analog disc played on a turntable', tags: ['audio', 'collecting'] },
+      { id: 'mu3', word: 'CONDUCTOR', category: 'Music', difficulty: 'easy', hint: 'Leads an orchestra without playing an instrument', tags: ['orchestra', 'performance'] },
+      { id: 'sp1', word: 'MARATHON', category: 'Sports', difficulty: 'easy', hint: 'A long-distance race of just over 42 kilometers', tags: ['running', 'race'] },
+      { id: 'sp2', word: 'CRICKET', category: 'Sports', difficulty: 'easy', hint: 'A bat-and-ball game with wickets', tags: ['team', 'field'] },
+      { id: 'sp3', word: 'CURLING', category: 'Sports', difficulty: 'medium', hint: 'Players slide stones across ice toward a target', tags: ['winter', 'team'] },
+      { id: 'sc1', word: 'MICROSCOPE', category: 'Science', difficulty: 'easy', hint: 'Makes tiny specimens visible', tags: ['lab', 'lens'] },
+      { id: 'sc2', word: 'ECLIPSE', category: 'Science', difficulty: 'medium', hint: 'One celestial body blocks the light of another', tags: ['space', 'shadow'] },
+      { id: 'sc3', word: 'PENDULUM', category: 'Science', difficulty: 'medium', hint: 'A swinging mass used to study motion and time', tags: ['physics', 'motion'] },
+      { id: 'n1', word: 'CORAL REEF', category: 'Nature', difficulty: 'easy', hint: 'A colorful marine ecosystem built by tiny animals', tags: ['ocean', 'ecosystem'] },
+      { id: 'n2', word: 'GLACIER', category: 'Nature', difficulty: 'easy', hint: 'A slow-moving river of ice', tags: ['ice', 'landscape'] },
+      { id: 'n3', word: 'MANGROVE', category: 'Nature', difficulty: 'hard', hint: 'A coastal forest with tangled salt-tolerant roots', tags: ['coast', 'forest'] },
+      { id: 'ar1', word: 'SUSPENSION BRIDGE', category: 'Architecture', difficulty: 'medium', hint: 'A roadway hangs from tall cables and towers', tags: ['engineering', 'structure'] },
+      { id: 'ar2', word: 'DOME', category: 'Architecture', difficulty: 'easy', hint: 'A rounded roof over a large space', tags: ['building', 'structure'] },
+      { id: 'ar3', word: 'CANTILEVER', category: 'Architecture', difficulty: 'hard', hint: 'A beam supported at only one end', tags: ['engineering', 'structure'] },
+      { id: 'h1', word: 'SILK ROAD', category: 'History', difficulty: 'medium', hint: 'A network of trade routes linking Asia and Europe', tags: ['trade', 'travel'] },
+      { id: 'h2', word: 'PRINTING PRESS', category: 'History', difficulty: 'easy', hint: 'A machine that transformed the spread of books', tags: ['invention', 'books'] },
+      { id: 'h3', word: 'RENAISSANCE', category: 'History', difficulty: 'hard', hint: 'A European revival of art and learning', tags: ['Europe', 'culture'] },
+      { id: 'l1', word: 'SHERLOCK HOLMES', category: 'Literature', difficulty: 'easy', hint: 'A detective who lives at Baker Street', tags: ['mystery', 'detective'] },
+      { id: 'l2', word: 'MOBY DICK', category: 'Literature', difficulty: 'medium', hint: 'A sailor pursues a white whale', tags: ['novel', 'sea'] },
+      { id: 'l3', word: 'HAMLET', category: 'Literature', difficulty: 'medium', hint: 'A Danish prince asks a famous question', tags: ['play', 'tragedy'] },
+      { id: 'p1', word: 'ASTRONAUT', category: 'Professions', difficulty: 'easy', hint: 'A trained traveler beyond Earth', tags: ['space', 'career'] },
+      { id: 'p2', word: 'BEEKEEPER', category: 'Professions', difficulty: 'medium', hint: 'Cares for hives and harvests honey', tags: ['craft', 'animals'] },
+      { id: 'p3', word: 'CARTOGRAPHER', category: 'Professions', difficulty: 'hard', hint: 'Makes maps of places and terrain', tags: ['maps', 'craft'] },
+      { id: 'fa1', word: 'TRENCH COAT', category: 'Fashion', difficulty: 'easy', hint: 'A belted outer layer with storm flaps', tags: ['clothing', 'outerwear'] },
+      { id: 'fa2', word: 'KIMONO', category: 'Fashion', difficulty: 'easy', hint: 'A Japanese garment with wide sleeves', tags: ['clothing', 'tradition'] },
+      { id: 'fa3', word: 'RUNWAY', category: 'Fashion', difficulty: 'medium', hint: 'Models walk this path during a show', tags: ['design', 'show'] },
+      { id: 'v1', word: 'SAILBOAT', category: 'Vehicles', difficulty: 'easy', hint: 'Moves across water using wind and canvas', tags: ['water', 'travel'] },
+      { id: 'v2', word: 'MOTORCYCLE', category: 'Vehicles', difficulty: 'easy', hint: 'A two-wheeled motor vehicle', tags: ['road', 'travel'] },
+      { id: 'v3', word: 'CABLE CAR', category: 'Vehicles', difficulty: 'medium', hint: 'A cabin travels suspended above a city or mountain', tags: ['transport', 'travel'] },
+      { id: 'my1', word: 'PEGASUS', category: 'Mythology', difficulty: 'easy', hint: 'A winged horse from Greek myth', tags: ['greek', 'creature'] },
+      { id: 'my2', word: 'MINOTAUR', category: 'Mythology', difficulty: 'medium', hint: 'A half-man, half-bull said to live in a maze', tags: ['greek', 'creature'] },
+      { id: 'my3', word: 'RAGNAROK', category: 'Mythology', difficulty: 'hard', hint: 'The prophesied end of the world in Norse myth', tags: ['norse', 'legend'] },
+      { id: 'va1', word: 'MOSAIC', category: 'Visual Arts', difficulty: 'easy', hint: 'An image made from many small pieces', tags: ['craft', 'image'] },
+      { id: 'va2', word: 'WATERCOLOR', category: 'Visual Arts', difficulty: 'easy', hint: 'Paint thinned with water on paper', tags: ['painting', 'color'] },
+      { id: 'va3', word: 'SCULPTURE', category: 'Visual Arts', difficulty: 'easy', hint: 'A three-dimensional work shaped by an artist', tags: ['form', 'craft'] },
+      { id: 'fe1', word: 'LANTERN FESTIVAL', category: 'Festivals', difficulty: 'medium', hint: 'A celebration where glowing lights fill the night', tags: ['light', 'celebration'] },
+      { id: 'fe2', word: 'CARNIVAL', category: 'Festivals', difficulty: 'easy', hint: 'A public celebration of costumes, music, and parades', tags: ['parade', 'celebration'] },
+      { id: 'fe3', word: 'HARVEST FESTIVAL', category: 'Festivals', difficulty: 'medium', hint: 'A seasonal celebration of gathered crops', tags: ['season', 'celebration'] },
+      { id: 'pl1', word: 'BONSAI', category: 'Plants', difficulty: 'easy', hint: 'A miniature tree shaped in a small pot', tags: ['garden', 'tree'] },
+      { id: 'pl2', word: 'SUNFLOWER', category: 'Plants', difficulty: 'easy', hint: 'A tall yellow bloom that tracks the sun', tags: ['flower', 'garden'] },
+      { id: 'pl3', word: 'VENUS FLYTRAP', category: 'Plants', difficulty: 'medium', hint: 'A carnivorous plant that snaps shut on insects', tags: ['flower', 'carnivorous'] },
+      { id: 'bg1', word: 'SCRABBLE', category: 'Board Games', difficulty: 'easy', hint: 'Players build words from letter tiles', tags: ['tiles', 'words'] },
+      { id: 'bg2', word: 'BACKGAMMON', category: 'Board Games', difficulty: 'medium', hint: 'Players race checkers around a board using dice', tags: ['strategy', 'dice'] },
+      { id: 'bg3', word: 'JENGA', category: 'Board Games', difficulty: 'easy', hint: 'Players remove wooden blocks without toppling a tower', tags: ['blocks', 'dexterity'] },
+    ],
+  },
 ];
 
 export class WordEngine {
@@ -119,9 +179,12 @@ export class WordEngine {
     return Array.from(this.packs.values());
   }
 
-  public pickRandomWord(packId: string, difficulty?: 'easy' | 'medium' | 'hard'): WordItem {
+  public pickRandomWord(packId: string, difficulty?: 'easy' | 'medium' | 'hard', wordCategories?: string[]): WordItem {
     const pack = this.packs.get(packId) || this.packs.get('pack-movies-cinema') || BUILTIN_WORD_PACKS[0];
-    let candidates = pack.words;
+    let candidates = wordCategories?.length
+      ? Array.from(this.packs.values()).flatMap((wordPack) => wordPack.words).filter((word) => wordCategories.includes(word.category))
+      : pack.words;
+    if (candidates.length === 0) candidates = pack.words;
     if (difficulty) {
       const filtered = candidates.filter((w) => w.difficulty === difficulty);
       if (filtered.length > 0) candidates = filtered;
