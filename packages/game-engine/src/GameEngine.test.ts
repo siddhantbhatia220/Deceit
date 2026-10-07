@@ -80,3 +80,28 @@ test('GameEngine secret information security: civilian receives secret word, imp
   assert.equal(imposterView.myInfo.role, 'IMPOSTER');
   assert.ok(imposterView.myInfo.category, 'Imposter receives configured category');
 });
+
+test('GameEngine deals only from selected word categories', () => {
+  const game = new GameEngine('CATS21', { id: 'p1', name: 'Alice' }, {
+    imposterCount: 1,
+    wordCategories: ['Animals', 'Mythology'],
+  });
+  game.addPlayer('p2', 'Bob');
+  game.addPlayer('p3', 'Charlie');
+
+  assert.equal(game.startGame(), true);
+  assert.ok(['Animals', 'Mythology'].includes(game.currentWordItem?.category ?? ''));
+});
+
+test('GameEngine allows unique player renames only in the lobby', () => {
+  const game = new GameEngine('NAME21', { id: 'p1', name: 'Alice' });
+  game.addPlayer('p2', 'Bob');
+
+  assert.equal(game.updatePlayerName('p1', '  Alex  '), true);
+  assert.equal(game.players.get('p1')?.name, 'Alex');
+  assert.equal(game.updatePlayerName('p1', 'Bob'), false);
+  assert.equal(game.updatePlayerName('p1', '   '), false);
+  game.phase = 'CLUE_PHASE';
+  assert.equal(game.updatePlayerName('p1', 'Alicia'), false);
+  assert.equal(game.players.get('p1')?.name, 'Alex');
+});
