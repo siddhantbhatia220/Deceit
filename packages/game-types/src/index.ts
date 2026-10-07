@@ -85,11 +85,38 @@ export interface VoteResult {
 // --------------------------------------------------------
 // Game Settings Schema (Validated)
 // --------------------------------------------------------
+export const WORD_CATEGORIES = [
+  'Movies',
+  'Gaming & Tech',
+  'Food',
+  'Travel',
+  'College',
+  'Animals',
+  'Music',
+  'Sports',
+  'Science',
+  'Nature',
+  'Architecture',
+  'History',
+  'Literature',
+  'Professions',
+  'Fashion',
+  'Vehicles',
+  'Mythology',
+  'Visual Arts',
+  'Festivals',
+  'Plants',
+  'Board Games',
+] as const;
+
+export type WordCategory = (typeof WORD_CATEGORIES)[number];
+
 export const GameSettingsSchema = z.object({
   maxPlayers: z.number().min(3).max(24).default(12),
   imposterCount: z.number().min(1).max(4).default(1),
   impostersKnowEachOther: z.boolean().default(false),
   wordPackId: z.string().default('pack-movies-cinema'),
+  wordCategories: z.array(z.enum(WORD_CATEGORIES)).min(1).default([...WORD_CATEGORIES]),
   customCategory: z.string().optional(),
   difficulty: z.enum(['easy', 'medium', 'hard']).default('medium'),
   imposterHintMode: z.enum(['NONE', 'CATEGORY', 'CATEGORY_AND_HINT']).default('CATEGORY'),
@@ -178,6 +205,7 @@ export interface ClientToServerEvents {
   'room:join': (payload: { roomCode: string; username: string; avatar?: string }, callback: (response: { success: boolean; error?: string }) => void) => void;
   'room:leave': () => void;
   'room:update_settings': (payload: Partial<GameSettings>) => void;
+  'player:update_name': (payload: { name: string }, callback: (response: { success: boolean; error?: string }) => void) => void;
   'player:toggle_ready': () => void;
   'player:add_bot': (payload: { personality?: 'balanced' | 'aggressive' | 'quiet' | 'analytical' | 'bluffer' }) => void;
   'player:remove_bot': (payload: { botId: string }) => void;
