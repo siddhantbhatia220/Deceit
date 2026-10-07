@@ -88,6 +88,18 @@ export class GameEngine {
     return true;
   }
 
+  public updatePlayerName(playerId: string, name: string): boolean {
+    if (this.phase !== 'LOBBY') return false;
+    const player = this.players.get(playerId);
+    const nextName = name.trim().slice(0, 20);
+    if (!player || player.isBot || !nextName) return false;
+    if ([...this.players.values()].some((candidate) => candidate.id !== playerId && candidate.name.toLowerCase() === nextName.toLowerCase())) {
+      return false;
+    }
+    player.name = nextName;
+    return true;
+  }
+
   public removePlayer(id: string): void {
     const player = this.players.get(id);
     if (!player) return;
@@ -112,7 +124,11 @@ export class GameEngine {
     if (this.players.size < 3) return false;
 
     // Pick secret word
-    this.currentWordItem = this.wordEngine.pickRandomWord(this.settings.wordPackId, this.settings.difficulty);
+    this.currentWordItem = this.wordEngine.pickRandomWord(
+      this.settings.wordPackId,
+      this.settings.difficulty,
+      this.settings.wordCategories
+    );
 
     // Assign civilian and imposter roles
     const playerIds = Array.from(this.players.keys());
