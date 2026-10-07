@@ -118,3 +118,14 @@ Use the Render service's HTTPS base URL. Do not include `/health`, `localhost`, 
 - The API exposes `GET /health` and attaches Socket.IO to the same HTTP server.
 - Room and player state is stored in API process memory. A server restart clears active rooms, and multiple API instances do not share room state.
 - Render free services may stop while idle, which can delay the first request after inactivity.
+
+## Automatic Deployments
+
+The GitHub Actions workflow in `.github/workflows/verify.yml` builds the workspaces and tests the game engine on pushes to `main` and pull requests.
+
+Connect both deployment providers to the same GitHub repository and production branch:
+
+- In Vercel, confirm the project is linked to the intended repository and that `main` is the Production Branch. Git integration creates preview deployments for other branches and a production deployment for changes to `main`.
+- In Render, confirm the Web Service is linked to that same repository and `main` branch. Set **Auto-Deploy** to **After CI Checks Pass** to deploy after the workflow succeeds. Choose **On Commit** instead if Render should deploy without waiting for checks.
+
+The GitHub repository linked to Render must match the repository receiving your pushes. A Render service linked to a fork or a different owner's repository will not see commits pushed elsewhere. No deployment tokens are required in this repository when using the providers' Git integrations.
