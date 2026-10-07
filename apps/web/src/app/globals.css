@@ -393,3 +393,59 @@ body button:focus-visible,input:focus-visible { outline:2px solid var(--arena-li
 .room-shell{width:min(1500px,100%)}.room-topbar{position:sticky;top:0;z-index:5;background:rgba(7,7,8,.8);backdrop-filter:blur(18px)}.room-center{display:flex;align-items:center;gap:8px}.room-code,.phase-pill,.timer-pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#111114;border-radius:10px;padding:7px 10px;font-size:10px;font-weight:800}.room-code button{border:0;background:transparent;color:#999;padding:0}.phase-pill{color:#ff7a86;text-transform:uppercase}.timer-pill{color:#e6ba64}.connection.ok{color:#66d99b}.room-grid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:16px;flex:1;padding:18px 0}.main-panel{min-height:calc(100svh - 140px)}.stage{padding:clamp(22px,4vw,50px);min-height:100%;display:flex;flex-direction:column}.stage.centered{align-items:center;justify-content:center;text-align:center}.stage-head{display:flex;justify-content:space-between;align-items:flex-start;gap:20px}.stage h1{font:900 clamp(30px,4vw,56px)/.98 var(--font-outfit);letter-spacing:-.055em;margin:8px 0 12px}.stage p{color:#85868e;line-height:1.6;font-size:13px;max-width:600px}.crew-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin:28px 0}.crew-card{display:flex;align-items:center;gap:10px;background:#0c0c0f;border:1px solid var(--line);border-radius:15px;padding:12px}.crew-card strong{font-size:12px;display:block}.crew-card small{display:block;color:#666;font-size:10px;margin-top:3px}.gold{color:#d9ad4e}.launch{max-width:300px;margin-top:auto}.intel-card{margin:22px auto;padding:24px 36px;background:#0b0b0d;border:1px solid var(--line);border-radius:18px;min-width:240px}.intel-card small{display:block;color:#777;font-size:9px;font-weight:800;letter-spacing:.16em}.intel-card strong{display:block;font:900 28px var(--font-outfit);margin:7px 0}.intel-card span{color:#8d8e96;font-size:11px}.danger-text,.danger{color:#ff4054}.clue-feed{flex:1;display:flex;flex-direction:column;gap:8px;overflow:auto;margin:20px 0}.clue{display:flex;gap:10px;padding:12px;background:#0c0c0f;border:1px solid var(--line);border-radius:13px}.avatar.small{width:28px;height:28px;flex-basis:28px}.clue strong{font-size:11px}.clue p{margin:3px 0 0;color:#ddd;font-size:12px}.empty-state{min-height:160px;display:flex;align-items:center;justify-content:center;gap:8px;color:#62636b;font-size:12px}.composer{display:flex;gap:7px}.composer input{margin:0}.composer button{width:46px;border:0;border-radius:12px;background:#e91630;color:#fff;display:grid;place-items:center}.round-chip{background:#19191d;border:1px solid var(--line);padding:8px 11px;border-radius:10px;font-size:10px;color:#888}.vote-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin:25px 0}.vote-card{background:#0c0c0f;border:1px solid var(--line);border-radius:15px;color:#fff;padding:16px;text-align:left;display:flex;flex-direction:column;gap:6px}.vote-card.selected{border-color:#ef233c;background:#1a0c0f;box-shadow:0 0 0 2px rgba(239,35,60,.12)}.vote-card strong{font-size:12px}.vote-card small{color:#666;font-size:10px}.guess-form{width:min(360px,100%);margin-top:20px}.waiting{display:flex;gap:8px;align-items:center;color:#777;font-size:12px}.side-panel{display:flex;flex-direction:column;gap:12px}.side-card{padding:16px}.side-title{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid var(--line);padding-bottom:11px}.side-title span{margin-left:auto;color:#666}.side-players{display:flex;flex-direction:column;gap:9px;margin-top:13px}.side-player{display:flex;align-items:center;gap:8px;font-size:11px}.presence{width:6px;height:6px;border-radius:50%;background:#555}.presence.on{background:#37e68c}.intel-side small{display:block;color:#666;font-size:9px;margin-top:14px}.intel-side strong{display:block;font:800 20px var(--font-outfit);margin:4px 0}.intel-side>span{color:#777;font-size:10px}.chat-card{display:flex;flex-direction:column;flex:1;min-height:260px}.chat-list{flex:1;overflow:auto;margin:12px 0;display:flex;flex-direction:column;gap:7px}.chat-message{background:#0c0c0f;border-radius:10px;padding:8px}.chat-message strong{font-size:9px;color:#ff6674}.chat-message p{margin:3px 0 0;font-size:10px;color:#c4c4ca;line-height:1.4}
 @media (max-width: 900px){.hero{grid-template-columns:1fr;max-width:680px;margin:auto;padding:45px 0}.hero-copy{text-align:center}.hero-copy>p{margin:0 auto}.room-grid{grid-template-columns:1fr}.side-panel{display:grid;grid-template-columns:1fr 1fr}.chat-card{grid-column:1/-1}.main-panel{min-height:65svh}.room-center{order:3}.room-topbar{height:auto;min-height:58px;flex-wrap:wrap;gap:8px;padding:10px 0}.room-topbar .connection{margin-left:auto}}
 @media (max-width: 560px){.app-shell,.room-shell{padding:14px}.topbar{height:50px}.status-pill{font-size:10px}.status-pill{max-width:190px}.hero{padding:34px 0 28px;gap:30px}.hero h1{font-size:49px}.hero-copy>p{font-size:14px}.panel-body{padding:20px}.mode-tabs button{font-size:10px;padding:11px 4px}.mode-tabs button svg{display:none}.feature-row{display:grid;grid-template-columns:1fr 1fr}.player-list{grid-template-columns:1fr}.footer{padding-bottom:8px}.room-center{width:100%;justify-content:flex-start;overflow:auto}.room-topbar .brand{font-size:18px}.side-panel{grid-template-columns:1fr}.chat-card{grid-column:auto}.stage{padding:20px}.stage-head{flex-direction:column}.stage h1{font-size:36px}.crew-grid{grid-template-columns:1fr 1fr}.vote-grid{grid-template-columns:1fr 1fr}.room-code,.phase-pill,.timer-pill{white-space:nowrap}.connection{font-size:10px}.main-panel{min-height:70svh}}
+
+/* ── GitHub link ── */
+html body .github-link{display:inline-flex;align-items:center;gap:7px;padding:7px 13px;border:1px solid rgba(231,225,207,.22);border-radius:5px;background:#172526;color:#b9e3cf;font-family:var(--font-mono);font-size:11px;font-weight:500;letter-spacing:.03em;text-decoration:none;transition:background .18s,color .18s,border-color .18s;white-space:nowrap}
+html body .github-link:hover{background:#1f3435;color:#d5eed8;border-color:rgba(169,213,192,.4)}
+html body .github-link svg{flex-shrink:0}
+@media(max-width:560px){html body .github-link span{display:none}html body .github-link{padding:7px 10px;gap:0}}
+
+/* ── Topbar three-column layout (fixes pic2 alignment) ── */
+html body .topbar{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+html body .topbar-center{display:flex;justify-content:center;align-items:center}
+html body .room-topbar{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+html body .room-center{justify-content:center}
+
+/* ── Composer with char counter ── */
+.composer-wrap{position:relative;flex:1;display:flex;align-items:center}
+.composer-wrap input{margin:0;width:100%;padding-right:52px}
+.composer-count{position:absolute;right:12px;color:rgba(255,255,255,0.28);font-size:10px;font-weight:600;pointer-events:none;white-space:nowrap}
+html body .composer-count{color:#889b94;font-family:var(--font-mono);font-size:9px}
+
+/* ── Clue numbering ── */
+.clue-num{flex-shrink:0;width:22px;color:#666;font-size:10px;font-weight:800;font-variant-numeric:tabular-nums;padding-top:1px}
+html body .clue-num{color:#a9d5c0;font-family:var(--font-mono);font-size:9px;font-weight:500}
+
+/* ── Discussion actions (vote or another round) ── */
+.discussion-actions{margin-top:auto;padding-top:24px;border-top:1px solid var(--line)}
+.discussion-actions-label{font-size:11px;color:#777;margin-bottom:12px;font-weight:600;letter-spacing:.04em}
+.discussion-actions-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.discussion-vote-btn{margin-top:0}
+html body .discussion-actions{border-color:rgba(231,225,207,.15)}
+html body .discussion-actions-label{color:#889b94;font-family:var(--font-mono);font-size:10px;font-weight:500}
+
+/* ── Mobile: fix scrollable game content (pic1) ── */
+@media(max-width:900px){
+  html body .room-shell{overflow:hidden;height:100svh;min-height:0;display:flex;flex-direction:column;padding:12px}
+  html body .room-topbar{flex:0 0 auto;position:sticky;top:0;z-index:10}
+  html body .room-grid{flex:1;min-height:0;overflow:hidden;grid-template-columns:1fr;grid-template-rows:1fr auto;gap:10px;padding:10px 0 0}
+  html body .main-panel{min-height:0;overflow-y:auto;overscroll-behavior:contain}
+  html body .side-panel{display:none}
+  html body .stage{padding:18px}
+  html body .stage h1{font-size:clamp(28px,7vw,44px)}
+  html body .clue-feed{max-height:35svh}
+  html body .composer-wrap input{font-size:16px}
+}
+@media(max-width:560px){
+  html body .room-shell{padding:10px}
+  html body .room-topbar{min-height:52px;padding:0}
+  html body .room-center{gap:6px}
+  html body .room-code,.phase-pill,.timer-pill{padding:5px 8px;font-size:9px}
+  html body .stage{padding:14px}
+  html body .discussion-actions-row{grid-template-columns:1fr}
+  html body .vote-grid{grid-template-columns:repeat(2,1fr)}
+}
+
+/* ── PWA install prompt polish ── */
+@media(display-mode:standalone){html body .app-shell>footer{display:none}}
+

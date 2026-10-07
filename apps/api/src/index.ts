@@ -277,6 +277,32 @@ export async function createServer() {
       }
     });
 
+    socket.on('game:request_more_clues', () => {
+      const mapping = socketToPlayerMap.get(socket.id);
+      if (!mapping) return;
+      const game = rooms.get(mapping.roomCode);
+      if (!game || game.phase !== 'DISCUSSION') return;
+
+      game.currentRound++;
+      game.players.forEach((p) => {
+        p.clueSubmitted = undefined;
+      });
+      game.setPhase('CLUE_PHASE', game.settings.clueTimerSeconds);
+      broadcastGameState(game);
+      handlePhaseTransition(game);
+    });
+
+    socket.on('game:start_voting', () => {
+      const mapping = socketToPlayerMap.get(socket.id);
+      if (!mapping) return;
+      const game = rooms.get(mapping.roomCode);
+      if (!game || game.phase !== 'DISCUSSION') return;
+
+      game.setPhase('VOTING', game.settings.votingTimerSeconds);
+      broadcastGameState(game);
+      handlePhaseTransition(game);
+    });
+
     socket.on('game:vote_submit', (payload) => {
       const mapping = socketToPlayerMap.get(socket.id);
       if (!mapping) return;

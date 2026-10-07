@@ -212,6 +212,8 @@ export interface ClientToServerEvents {
   'player:kick': (payload: { targetPlayerId: string }) => void;
   'game:start': () => void;
   'game:clue_submit': (payload: { text: string }) => void;
+  'game:request_more_clues': () => void;
+  'game:start_voting': () => void;
   'game:vote_submit': (payload: { targetPlayerId: string | 'SKIP' }) => void;
   'game:imposter_guess': (payload: { guessedWord: string }) => void;
   'game:rematch': () => void;
